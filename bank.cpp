@@ -10,10 +10,18 @@ using namespace std;
 // creating class for banking system
 class bank
 {
+private:
+    int pin;
+    float balance;
+    string id, password, name, fname, address, phone;
+
 public:
     void menu();
     void bank_management();
     void atm_management();
+    void new_user();
+    void already_user();
+    
 };
 
 void bank::menu()
@@ -75,13 +83,13 @@ p:
     goto p;
 }
 
-// function for bank_management
-void bank::bank_management()
+// function for atm_management
+void bank::atm_management()
 {
 p:
     system("cls");
     int choice;
-    cout << "\n\n\t\t\tBank Management System";
+    cout << "\n\n\t\t\tATM Management System";
     cout << "\n\n 1. User Login & Check Balance";
     cout << "\n 2. Withdraw Amount";
     cout << "\n 3. Account Details";
@@ -91,6 +99,7 @@ p:
     switch (choice)
     {
     case 1:
+        new_user();
         break;
     case 2:
         break;
@@ -106,13 +115,13 @@ p:
     goto p;  // repeating the function
 }
 
-// function for atm_management
-void bank::atm_management()
+// function for bank_management
+void bank::bank_management()
 {
 p:
     system("cls");
     int choice;
-    cout << "\n\n\t\t\tATM Management System";
+    cout << "\n\n\t\t\tBank Management System";
     cout << "\n\n 1. New User";
     cout << "\n 2. Already User";
     cout << "\n 3. Deposit Option";
@@ -130,8 +139,10 @@ p:
     switch (choice)
     {
     case 1:
+        new_user();
         break;
     case 2:
+        already_user();
         break;
     case 3:
         break;
@@ -159,6 +170,97 @@ p:
     }
     getch(); // like mainloop
     goto p;  // repeating the function
+}
+
+// creating the new_user function
+void bank::new_user()
+{
+p:
+    system("cls");
+    fstream file;
+    int p;
+    float bal;
+    string n, f, pass, addr, ph, i;
+    cout << "\n\n\t\t\tAdd New User";
+    cout << "\n\n User ID : ";
+    cin >> id;
+    cout << "\n\n\t\tName : ";
+    cin >> name;
+    cout << "\n\n Father Name : ";
+    cin >> fname;
+    cout << "\n\n\t\t Address : ";
+    cin >> address;
+    cout << "\n\n Pin Code (6 digit) : ";
+    cin >> pin;
+    cout << "\n\n\t\tPassword :";
+    cin >> password;
+    cout << "\n\n Phone No : ";
+    cin >> phone;
+    cout << "\n\n\t\tCurrent Balance : ";
+    cin >> balance;
+    file.open("bank.txt", ios::in);
+    if (!file)
+    {
+        file.open("bank.txt", ios::app | ios::out);
+        file << " " << id << " " << name << " " << fname << " " << address << " " << pin << " " << password << " " << phone << " " << balance << endl;
+        file.close();
+    }
+    else
+    {
+        file >> i >> n >> f >> addr >> p >> pass >> ph >> bal;
+        while (!file.eof())
+        {
+            if (i == id)
+            {
+                cout << "\n\n User ID Already Exist...";
+                getch();
+                goto p;
+            }
+            file >> i >> n >> f >> addr >> p >> pass >> ph >> bal;
+        }
+        file.close();
+        file.open("bank.txt", ios::app | ios::out);
+        file << " " << id << " " << name << " " << fname << " " << address << " " << pin << " " << password << " " << phone << " " << balance << endl;
+        file.close();
+    }
+    cout << "\n\n New User Added Successfully..";
+}
+
+void bank::already_user()
+{
+
+    system("cls");
+    fstream file;
+    string test_id;
+    int found = 0;
+    cout << "\n\n\t\t\tAlready User Account";
+    file.open("bank.txt", ios::in);
+    if (!file)
+    {
+        cout << "\n\n File Opening Error...";
+    }
+    else
+    {
+        cout << "\n\n User ID : ";
+        cin >> test_id;
+        file >> id >> name >> fname >> address >> pin >> password >> phone >> balance;
+        while (!file.eof())
+        {
+            if (test_id == id)
+            {
+                system("cls");
+                cout << "\n\n\t\t\t Already User Account";
+                cout << "\n\n User ID : " << id << "   Pin Code : " << pin << "   Password" << password;
+                found++;
+            }
+            file >> id >> name >> fname >> address >> pin >> password >> phone >> balance;
+        }
+        file.close();
+        if (found == 0)
+        {
+            cout << "\n\n User ID Can't Found...";
+        }
+    }
 }
 
 // main function

@@ -1,0 +1,2 @@
+
+            file >> id >> name >> fname
