@@ -23,6 +23,7 @@ public:
     void already_user();
     void deposit();
     void withdraw();
+    void transfer();
 };
 
 void bank::menu()
@@ -152,6 +153,7 @@ p:
         withdraw();
         break;
     case 5:
+        transfer();
         break;
     case 6:
         break;
@@ -351,6 +353,7 @@ void bank::withdraw()
                 }
                 else
                 {
+                    file1 << " " << id << " " << name << " " << fname << " " << address << " " << pin << " " << password << " " << phone << " " << balance << endl;
                     cout << "\n\n\t\t\tYour Current Balance " << balance << " Is Less.....";
                 }
                 found++;
@@ -368,6 +371,73 @@ void bank::withdraw()
         if (found == 0)
         {
             cout << "\n\n User ID Can't Found...";
+        }
+    }
+}
+
+// transfer function
+void bank::transfer()
+{
+    fstream file, file1;
+    system("cls");
+    string sender_id, reciver_id;
+    int found = 0;
+    float amount;
+    cout << "\n\n\t\t\tPayment Transfer Option";
+    file.open("bank.txt", ios::in);
+    if (!file)
+    {
+        cout << "\n\n File Opening Error....";
+    }
+    else
+    {
+        cout << "\n\n Enter Sender User ID For Transaction : ";
+        cin >> sender_id;
+        cout << "\n\n Reciver User ID For Transaction : ";
+        cin >> reciver_id;
+        cout << "\n\n Enter Transaction Amount : ";
+        cin >> amount;
+        file >> id >> name >> fname >> address >> pin >> password >> phone >> balance;
+        while (!file.eof())
+        {
+            if (sender_id == id && amount >= balance)
+                found++;
+            else if (reciver_id == id)
+                found++;
+
+            file >> id >> name >> fname >> address >> pin >> password >> phone >> balance;
+        }
+        file.close();
+        if (found == 2)
+        {
+            file.open("bank.txt", ios::in);
+            file1.open("bank1.txt", ios::app | ios::out);
+            file >> id >> name >> fname >> address >> pin >> password >> phone >> balance;
+            while (!file.eof())
+            {
+                if (sender_id == id)
+                {
+                    balance -= amount;
+                    file1 << " " << id << " " << name << " " << fname << " " << address << " " << pin << " " << password << " " << phone << " " << balance << endl;
+                }
+                else if (reciver_id == id)
+                {
+                    balance += amount;
+                }
+                else
+                {
+                    file1 << " " << id << " " << name << " " << fname << " " << address << " " << pin << " " << password << " " << phone << " " << balance << endl;
+                }
+                file >> id >> name >> fname >> address >> pin >> password >> phone >> balance;
+            }
+            file.close();
+            file1.close();
+            remove("bank.txt");
+            rename("bank1.txt", "bank.txt");
+        }
+        else
+        {
+            cout << "\n\n\t\t\tBoth Transaction User ID's & Balance Are Invalid....";
         }
     }
 }
